@@ -1,4 +1,5 @@
 from button import Button
+import pygame
 import sys
 class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
@@ -13,8 +14,8 @@ class Gamestatus():
         self.page=0
         self.score=0
         # self.reward=0
-    def create_button(self,msg,width=150,height=50,size=48,FILLED=True):
-        return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED)
+    def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0)):
+        return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color)
     def new_button(self,msg,centerx,centery,FILL=True):
         b=self.create_button(msg)
         b.rect.center=(centerx,centery)
@@ -42,8 +43,14 @@ class Gamestatus():
             self.back_button=self.new_button("Back",100,50)
         elif self.page==4:
             self.back_button=self.new_button("Back",100,50)
-        
+    def show_other(self):
+        if self.pause==1:
+            self.small_screen=self.create_button("a",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
+            self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
+            self.small_screen.draw_button()
     def turn_page(self,mouse_x,mouse_y):
+        if self.pause==1:
+            return
         if self.page==0:
             if self.start_button.rect.collidepoint(mouse_x,mouse_y):
                 self.page=1
@@ -68,7 +75,7 @@ class Gamestatus():
         elif self.page==4:
             if self.back_button.rect.collidepoint(mouse_x,mouse_y):
                 self.page=0
-        
+            
             
             
         # elif self.page==1:

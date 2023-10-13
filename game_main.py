@@ -21,9 +21,13 @@ class Game():
             if event.type==pygame.MOUSEBUTTONDOWN:
                 mouse_x,mouse_y=pygame.mouse.get_pos()
                 self.status.turn_page(mouse_x,mouse_y)
+            elif event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    self.status.pause^=1
     def draw(self):
         self.screen.fill(self.ai_settings.bg_color)
         self.status.draw_page()
+        self.status.show_other()
         pygame.display.flip()    
     def run_game(self):
         while True:
