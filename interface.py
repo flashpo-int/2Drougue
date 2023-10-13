@@ -38,7 +38,7 @@ class Gamestatus():
         b_name.draw_button()
         return b
     def draw_page(self):
-        if self.page==0:
+        if self.page==0:#初始
             # pass
             # life=Life(self.screen)
             # life.draw_life(self.ship_left)
@@ -51,25 +51,29 @@ class Gamestatus():
             self.config_button=self.new_button("Config",100,250)
             self.save_button=self.new_button("Save",100,350)
             self.quit_button=self.new_button("quit",100,450)
-        elif self.page==1:
+
+        elif self.page==1:#选人
             self.back_button=self.new_button("Back",100,50)
             self.p1_button=self.create_person(200,"p1")
             self.p2_button=self.create_person(600,"p2")
             self.p3_button=self.create_person(1000,"p3")
             
-        elif self.page==2:
+        elif self.page==2:#天赋
             self.back_button=self.new_button("Back",100,50)
-        elif self.page==3:
+
+        elif self.page==3:#设定
             self.back_button=self.new_button("Back",100,50)
-        elif self.page==4:
+
+        elif self.page==4:#存档
             self.back_button=self.new_button("Back",100,50)
-        elif self.page==11:
+
+        elif self.page==11:#难度
             self.back_button=self.new_button("Back",100,50)
             self.easy_button=self.new_button("easy",400,400)
             self.hard_button=self.new_button("hard",800,400)
             
             
-    def show_other(self):
+    def show_other(self):#暂停
         if self.pause==1:
             self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
             self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
@@ -80,13 +84,13 @@ class Gamestatus():
     def turn_page(self,mouse_x,mouse_y):
         self.mouse_x=mouse_x
         self.mouse_y=mouse_y
-        if self.pause==1:
+        if self.pause==1:#暂停
             if self.colli(self.menu_button):
                 self.game_start=0
                 self.page=0
                 self.pause=0
             return
-        if self.page==0:
+        if self.page==0:#初始界面
             if self.colli(self.start_button):
                 self.page=1
             elif self.colli(self.talent_button):
@@ -97,7 +101,8 @@ class Gamestatus():
                 self.page=4
             if self.colli(self.quit_button):
                 sys.exit()
-        elif self.page==1:
+
+        elif self.page==1:#选人
             if self.colli(self.back_button):
                 self.page=0
             elif self.colli(self.p1_button):
@@ -109,16 +114,20 @@ class Gamestatus():
             elif self.colli(self.p3_button):
                 self.page=11    
                 self.person_id=3
-        elif self.page==2:
+
+        elif self.page==2:#天赋
             if self.colli(self.back_button):
                 self.page=0
-        elif self.page==3:
+
+        elif self.page==3:#设定
             if self.colli(self.back_button):
                 self.page=0
-        elif self.page==4:
+
+        elif self.page==4:#存档
             if self.colli(self.back_button):
                 self.page=0
-        elif self.page==11:
+
+        elif self.page==11:#难度
             if self.colli(self.back_button):
                 self.page=1
             if self.colli(self.easy_button):
