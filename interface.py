@@ -21,6 +21,13 @@ class Gamestatus():
         b.rect.center=(centerx,centery)
         b.draw_button(FILL)
         return b
+    def check_event(self,event):
+        if event.type==pygame.MOUSEBUTTONDOWN:
+                mouse_x,mouse_y=pygame.mouse.get_pos()
+                self.turn_page(mouse_x,mouse_y)
+        elif event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_ESCAPE:
+                self.pause^=1
     def draw_page(self):
         if self.page==0:
             # pass
