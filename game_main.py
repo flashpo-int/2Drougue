@@ -25,9 +25,13 @@ class Game():
         self.status.draw_page()
         self.status.show_other()
         pygame.display.flip()    
+    def qi_dong(self):
+        pass
     def run_game(self):
         while True:
             self.check_event()
+            if self.status.game_start:
+                self.qi_dong()
             self.draw()
             self.clock.tick(60)
 
