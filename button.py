@@ -1,11 +1,11 @@
 import pygame.font
 class Button():
-    def __init__(self,ai_settings,screen,msg,width=200,height=50,size=48,FILLED=True) -> None:
+    def __init__(self,ai_settings,screen,msg,width=200,height=50,size=48,FILLED=True,color = (0,255,0)) -> None:
         self.screen=screen
         self.screen_rect=screen.get_rect()
         self.ai_settings=ai_settings
         self.width,self.height=width,height
-        self.button_color=(0,255,0)
+        self.button_color=color
         self.text_color=(255,255,255)
         self.font=pygame.font.SysFont(None,size)
         
