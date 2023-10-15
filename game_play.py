@@ -50,6 +50,9 @@ knife = pygame.image.load('weapon/knife.png')
 shield = pygame.image.load('weapon/shield.png')
 sword = pygame.image.load('weapon/sword.png')
 
+# score
+max_score = 100
+
 class Game_play():
     def __init__(self, screen) -> None:
         self.chara = None
@@ -62,10 +65,13 @@ class Game_play():
         # character
         self.chara_1 = Character(Settings, self.screen, chara1, self.knife)
         # enemy
-        self.enemy_1 = Enemy(10, 10, 5, 1, enemy1, self.screen, None)
+        self.enemy_1 = Enemy(10, 10, 2.5, 1, enemy1, self.screen, None)
         # setting:
         self.enemy_cd = 5
         self.enemy_lst = -5
+
+        # score:
+        self.score = 0
 
         self.create_chara()
         pass
@@ -98,8 +104,23 @@ class Game_play():
         if a.hp <=0: return False
         return True
     
-    def draw(self):
+    def chara_attack(self):
+        for bullet in self.chara.weapon.bullets:
+            for enemy in self.enemy:
+                if self.check_colli(bullet, enemy):
+                    enemy.hp -= bullet.dmg
+                    if bullet in self.chara.weapon.bullets:
+                        self.chara.weapon.bullets.remove(bullet)
+                    if not self.check_hp(enemy):
+                        self.enemy.remove(enemy)
+                        self.score += 5
 
+    def enemy_attack(self):
+        for enemy in self.enemy:
+            if self.check_colli(enemy, self.chara):
+                self.chara.hp -= enemy.attack()
+
+    def draw(self):
         self.chara.draw()
         for enemy in self.enemy:
             enemy.draw()
@@ -112,8 +133,15 @@ class Game_play():
             self.direction_chara(event.key, 0)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
+            self.chara.attack(mouse_x, mouse_y)
+
+    def check_score(self):
+        if self.score >= max_score: return True
+        return False
 
     def play(self):
         self.create_enemy()
         self.move()
+        self.chara_attack()
+        self.enemy_attack()
         

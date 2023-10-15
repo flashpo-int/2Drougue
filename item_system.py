@@ -2,7 +2,7 @@ import pygame, sys, time
 
 class Bullet():
     def __init__(self, x, y, dmg, speed, dirx, diry, img, screen) -> None:
-        self.dmg, self.speed, self.dirx, self.diry = dmg, speed, dirx, diry
+        self.dmg, self.speed, self.dirx, self.diry, self.img = dmg, speed, dirx, diry, img
         self.rect = self.img.get_rect()
         self.rect.centerx = x
         self.rect.centery = y

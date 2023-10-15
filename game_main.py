@@ -20,6 +20,7 @@ class Game():
     def reset(self):        
         # self.status.game_over=FLAG
         self.status=Gamestatus(self.screen,self.ai_settings)
+        self.gp = Game_play(self.screen)
         # self.status.easy=0
     def check_event(self):
         for event in pygame.event.get():
@@ -37,6 +38,12 @@ class Game():
         pygame.display.flip()    
     def qi_dong(self):
         self.gp.play()
+        if self.gp.check_score(): # 分数达标
+            self.reset()
+            return
+        if not self.gp.check_hp(self.gp.chara):
+            self.reset()
+            return
         pass
     def run_game(self):
         while True:
