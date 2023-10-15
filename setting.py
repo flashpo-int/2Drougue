@@ -1,7 +1,8 @@
 import pygame
-pygame.init()
+import json
 class Settings():
     def __init__(self):
+        pygame.init()
         self.screen_info = pygame.display.Info()
         self.screen_width = self.screen_info.current_w
         self.screen_height = self.screen_info.current_h
@@ -9,6 +10,14 @@ class Settings():
         self.small_screen_height= self.screen_height // 1.2
         self.bg_color = (230, 230, 230)
         self.small_bg_color=(100,100,100)
+    def read(self):
+        file_name = "save.json"
+        # Open the file in read mode
+        with open(file_name, 'r') as file:
+            # Load the dictionary from the file using json.load()
+            game_save = json.load(file)
+        # Print the loaded dictionary
+        return game_save
     def save(self,energy,talents,status): #talents,status用字典传进来
         # 不知道写啥，快点告诉我保存什么
         #把你们要保存的写在这里
@@ -31,5 +40,6 @@ class Settings():
         }
         #上面这个我会注释掉，你们按照这个格式传进来和读取
         self.status = dict(status) #然后传的时候不要直接=，不然 python 会自动&取地址，然后存档就寄了
-
-
+        file_name = "save.json"
+        with open(file_name, 'w') as file:
+            json.dump(file,status)
