@@ -6,7 +6,7 @@ import sys
 chara=[]
 name=["lwt","lwt","lwt"]
 
-chara.append (pygame.image.load('character\character1\char1.png'))
+chara.append (pygame.image.load('character\character1\char.bmp'))
 chara.append (pygame.image.load('character\character1\char2.png'))
 chara.append (pygame.image.load('character\character1\char1.png'))
 
@@ -110,12 +110,19 @@ class Gamestatus():
             self.hard_button=self.new_button("hard",800,400)
             
             
-    def show_other(self):#暂停
-        if self.pause==1:
+    def show_other(self):
+        if self.pause==1:#暂停选择返回主界面
             self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
             self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
             self.small_screen.draw_button()
             self.menu_button=self.new_button("Menu",600,600)
+        elif self.pause==2:##进入单局游戏内三选一提升
+            self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
+            self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
+            self.small_screen.draw_button()
+            self.talent_button_1=self.new_button("talent1",383,444)
+            self.talent_button_2=self.new_button("talent2",683,444)
+            self.talent_button_3=self.new_button("talent3",1083,444)
     def colli(self,bt):
         return bt.rect.collidepoint(self.mouse_x,self.mouse_y)
     def turn_page(self,mouse_x,mouse_y):
@@ -127,6 +134,15 @@ class Gamestatus():
                 self.page=0
                 self.pause=0
             return
+        ##等级提升时，把pause设为 2 
+        if self.pause == 2:##升级界面
+            if self.colli(self.talent_button_1):
+                ##把选项1传入到人物属性提升
+                self.page=111
+            elif self.colli(self.talent_button_2):
+                self.page=111
+            elif self.colli(self.talent_button_3):
+                self.page=111
         if self.page==0:#初始界面
             if self.colli(self.start_button):
                 self.page=1
