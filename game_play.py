@@ -19,7 +19,7 @@ from character import Character
 from item_system import Weapon
 from enemy import Enemy
 from setting import Settings
-
+from interface import Gamestatus
 
 # enemy size
 enemy_width = 5
@@ -139,9 +139,11 @@ class Game_play():
         if self.score >= max_score: return True
         return False
 
-    def play(self):
+    def play(self,status):
         self.create_enemy()
         self.move()
         self.chara_attack()
         self.enemy_attack()
+        status.chara=self.chara
+        status.enemy=self.enemy
         

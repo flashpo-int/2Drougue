@@ -33,11 +33,12 @@ class Game():
         self.screen.fill(self.ai_settings.bg_color)
         self.status.draw_page()
         self.status.show_other()
+        self.status.show_game_statement()
         if self.status.game_start and not self.status.pause:
             self.gp.draw()
         pygame.display.flip()    
     def qi_dong(self):
-        self.gp.play()
+        self.gp.play(self.status)
         if self.gp.check_score(): # 分数达标
             self.reset()
             return

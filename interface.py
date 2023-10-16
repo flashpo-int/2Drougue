@@ -6,6 +6,8 @@ class Gamestatus():
         self.ai_settings=ai_settings
         self.screen=screen
         self.person_id=0
+        self.enemy=[]
+        self.chara=None
         self.reset_stats()
     def reset_stats(self):
         # self.ship_left=self.ai_settings.ship_limit
@@ -17,8 +19,8 @@ class Gamestatus():
         # self.reward=0
     def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0)):
         return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color)
-    def new_button(self,msg,centerx,centery,FILL=True):
-        b=self.create_button(msg)
+    def new_button(self,msg,centerx,centery,width=150,height=50,color=(0,255,0),FILL=True):
+        b=self.create_button(msg,width,height,48,True,color)
         b.rect.center=(centerx,centery)
         b.draw_button(FILL)
         return b
@@ -29,6 +31,9 @@ class Gamestatus():
         elif event.type==pygame.KEYDOWN:
             if event.key==pygame.K_ESCAPE:
                 self.pause^=1
+
+
+
     def create_person(self,centerx,name):
         b=self.create_button("",150,400,0,True,(255,255,0))
         b.rect.center=(centerx,300)
@@ -37,6 +42,14 @@ class Gamestatus():
         b_name.rect.center=(centerx,600)
         b_name.draw_button()
         return b
+
+    def show_game_statement(self):
+        if self.game_start==0 or self.pause==1:pass
+        for enemy in self.enemy:
+            self.hp_button=self.new_button("",enemy.rect.centerx,enemy.rect.centery-100,enemy.hp*10,30,(255,0,0))
+        if self.chara != None:
+           self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-100,self.chara.hp,30)
+
     def draw_page(self):
         if self.page==0:#初始
             # pass
