@@ -8,20 +8,18 @@ from item_system import Weapon
 from character import Character
 from enemy import Enemy
 from game_play import Game_play
-import time
+from time import sleep
 class Game():
     def __init__(self) -> None:
         pygame.init()
         self.clock=pygame.time.Clock()
         self.ai_settings=Settings()
         self.screen=pygame.display.set_mode((self.ai_settings.screen_width,self.ai_settings.screen_height))
-        self.gp = Game_play(self.screen)
+        self.status=Gamestatus(self.screen,self.ai_settings)
         self.reset()
     def reset(self):        
-        # self.status.game_over=FLAG
-        self.status=Gamestatus(self.screen,self.ai_settings)
-        self.gp = Game_play(self.screen)
-        # self.status.easy=0
+        self.status.reset_stats()
+        self.gp = Game_play(self.screen,self.status)
     def check_event(self):
         for event in pygame.event.get():
             if self.status.game_start and not self.status.pause:
@@ -34,24 +32,31 @@ class Game():
         self.status.draw_page()
         self.status.show_other()
         self.status.show_game_statement()
+        flag=0
+        if self.status.game_over==1:flag=1
         if self.status.game_start and not self.status.pause:
             self.gp.draw()
         pygame.display.flip()    
-    def qi_dong(self):
-        self.gp.play(self.status)
-        if self.gp.check_score(): # 分数达标
+        if flag:
+            sleep(1)
             self.reset()
+    def qi_dong(self):
+        self.gp.play()
+        if self.gp.check_score(): # 分数达标
+            self.status.game_lose=0
+            self.status.game_over=1
             return
         if not self.gp.check_hp(self.gp.chara):
-            self.reset()
+            self.status.game_lose=1
+            self.status.game_over=1
             return
         pass
     def run_game(self):
         while True:
             self.check_event()
-            self.draw()
-            if self.status.game_start:
+            if self.status.game_start==1 and self.status.pause==0:
                 self.qi_dong()
+            self.draw()
             self.clock.tick(60)
 
 game=Game()

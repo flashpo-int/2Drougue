@@ -54,8 +54,9 @@ sword = pygame.image.load('weapon/sword.png')
 max_score = 100
 
 class Game_play():
-    def __init__(self, screen) -> None:
+    def __init__(self, screen,status) -> None:
         self.chara = None
+        self.status=status
         self.enemy = []
         self.screen = screen
         # data_class
@@ -63,7 +64,7 @@ class Game_play():
         self.arrow = Weapon("arrow", 10, 1, 1.5, 5, arrow, self.screen)
         self.knife = Weapon("knife", 5, 1, 1.01, 10, knife, self.screen)
         # character
-        self.chara_1 = Character(Settings, self.screen, chara1, self.knife)
+        self.chara_1 = Character(Settings, self.screen,self.status, chara1, self.knife)
         # enemy
         self.enemy_1 = Enemy(10, 10, 2.5, 1, enemy1, self.screen, None)
         # setting:
@@ -139,11 +140,12 @@ class Game_play():
         if self.score >= max_score: return True
         return False
 
-    def play(self,status):
+    def play(self):
         self.create_enemy()
         self.move()
         self.chara_attack()
         self.enemy_attack()
-        status.chara=self.chara
-        status.enemy=self.enemy
+        self.status.chara=self.chara
+        self.status.enemy=self.enemy
+        self.status.score=self.score
         

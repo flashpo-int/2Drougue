@@ -3,9 +3,10 @@ from item_system import Weapon
 from item_system import Bullet
 
 class Character():
-    def __init__(self, setting, screen, img, weapon) -> None:
+    def __init__(self, setting, screen,status, img, weapon) -> None:
         # chara image
         self.img = img
+        self.status=status
         self.rect = self.img.get_rect()
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -53,17 +54,16 @@ class Character():
         self.weapon.move()
     
     def direction(self, key, tag): # tag == 1 -> keydown or 0 --> keyup
-        if tag:
-            if key == pygame.K_a: self.left = True
-            if key == pygame.K_d: self.right = True
-            if key == pygame.K_w: self.up = True
-            if key == pygame.K_s: self.down = True 
-        else:
-            if key == pygame.K_a: self.left = False
-            if key == pygame.K_d: self.right = False
-            if key == pygame.K_w: self.up = False
-            if key == pygame.K_s: self.down = False
 
+        if key == pygame.K_a or key==pygame.K_LEFT: self.left = tag
+        if key == pygame.K_d or key==pygame.K_RIGHT: self.right = tag
+        if key == pygame.K_w or key==pygame.K_UP: self.up = tag
+        if key == pygame.K_s or key==pygame.K_DOWN: self.down = tag
+
+        if self.status.bao==1:
+            self.status.bao=0
+            self.left=self.right=self.up=self.down=0
+            
     def attack(self, mouse_x, mouse_y):
         now = time.time()
         if now - self.weapon.atk_lst < self.weapon.cd: return

@@ -1,17 +1,29 @@
 from button import Button
+from setting import Settings
 import pygame
 import sys
+
+chara=[]
+name=["lwt","lwt","lwt"]
+
+chara.append (pygame.image.load('character\character1\char1.png'))
+chara.append (pygame.image.load('character\character1\char2.png'))
+chara.append (pygame.image.load('character\character1\char1.png'))
+
 class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
         self.ai_settings=ai_settings
         self.screen=screen
-        self.person_id=0
-        self.enemy=[]
-        self.chara=None
         self.reset_stats()
     def reset_stats(self):
         # self.ship_left=self.ai_settings.ship_limit
         self.game_start=0
+        self.game_over=0
+        self.enemy=[]
+        self.chara=None
+        self.person_id=0
+        self.game_lose=0
+        self.bao=0
         self.pause=0
         self.easy=1
         self.page=0
@@ -31,26 +43,38 @@ class Gamestatus():
         elif event.type==pygame.KEYDOWN:
             if event.key==pygame.K_ESCAPE:
                 self.pause^=1
+                if self.pause==1:
+                    self.bao=1
 
 
 
-    def create_person(self,centerx,name):
+    def create_person(self,centerx,ID):
         b=self.create_button("",150,400,0,True,(255,255,0))
         b.rect.center=(centerx,300)
-        b.draw_button()
-        b_name=self.create_button(name,150,50,48,True,(0,255,0))
+        # b.draw_button()
+        b_name=self.create_button(name[ID],150,50,48,True,(0,255,0))
         b_name.rect.center=(centerx,600)
         b_name.draw_button()
+        self.screen.blit(chara[ID], b.rect)
         return b
 
     def show_game_statement(self):
-        if self.game_start==0 or self.pause==1:pass
+        if self.game_start==0 or self.pause==1:return
         for enemy in self.enemy:
             self.hp_button=self.new_button("",enemy.rect.centerx,enemy.rect.centery-100,enemy.hp*10,30,(255,0,0))
         if self.chara != None:
            self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-100,self.chara.hp,30)
+        score_button=self.create_button("score:"+str(self.score),200,50,48,0)
+        score_button.rect.center=(self.ai_settings.screen_width-score_button.rect.width,float(score_button.rect.height)/2)
+        score_button.draw_button(False)
 
     def draw_page(self):
+        if self.game_over==1:
+            if self.game_lose:
+                self.new_button("You lose",750,400)
+            else :
+                self.new_button("You win",750,400)
+
         if self.page==0:#初始
             # pass
             # life=Life(self.screen)
@@ -67,9 +91,9 @@ class Gamestatus():
 
         elif self.page==1:#选人
             self.back_button=self.new_button("Back",100,50)
-            self.p1_button=self.create_person(200,"p1")
-            self.p2_button=self.create_person(600,"p2")
-            self.p3_button=self.create_person(1000,"p3")
+            self.p1_button=self.create_person(200,0)
+            self.p2_button=self.create_person(600,1)
+            self.p3_button=self.create_person(1000,2)
             
         elif self.page==2:#天赋
             self.back_button=self.new_button("Back",100,50)
