@@ -23,6 +23,8 @@ class Game():
         self.left_time=self.ai_settings.max_time
     def check_event(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
             if self.status.game_start and not self.status.pause:
                 if event.type != pygame.KEYDOWN or event.key != pygame.K_ESCAPE: self.gp.check_event(event)
                 else: self.status.check_event(event)

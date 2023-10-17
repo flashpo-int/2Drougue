@@ -76,17 +76,18 @@ class Game_play():
         for bullet in self.chara.weapon.bullets:
             for enemy in self.enemy:
                 if self.check_colli(bullet, enemy):
-                    enemy.hp -= bullet.dmg
+                    enemy.hp -= self.chara.get_damage() # 敌人受到攻击扣血
                     if bullet in self.chara.weapon.bullets:
                         self.chara.weapon.bullets.remove(bullet)
-                    if not self.check_hp(enemy):
+                    if not self.check_hp(enemy): # 击杀小怪
                         self.enemy.remove(enemy)
                         self.score += 5
+                        self.chara.get_exp(0)
 
     def enemy_attack(self):
         for enemy in self.enemy:
             if self.check_colli(enemy, self.chara):
-                self.chara.hp -= enemy.attack()
+                self.chara.get_hurt(enemy.attack())
 
     def draw(self):
         self.chara.draw()
@@ -112,7 +113,9 @@ class Game_play():
         self.move()
         self.chara_attack()
         self.enemy_attack()
+        self.chara.get_shield()
         self.status.chara=self.chara
         self.status.enemy=self.enemy
         self.status.score=self.score
+        print(self.chara.hp, self.chara.shield)
         
