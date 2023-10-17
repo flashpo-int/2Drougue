@@ -28,6 +28,7 @@ class Gamestatus():
         self.page=0
         self.score=0
         self.time=0
+        self.chara_pre_level=0
         # self.reward=0
     def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0),img=None):
         return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color,img)
@@ -202,7 +203,11 @@ class Gamestatus():
                 self.easy=0
                 self.page=111
                 self.game_start=1
-            
+
+        elif self.page==111:
+            if self.chara_pre_level!=self.chara.level:
+                self.pause=2
+                self.chara_pre_level=self.chara.level
             
             
 
