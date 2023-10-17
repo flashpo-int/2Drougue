@@ -16,7 +16,6 @@ class Gamestatus():
         self.screen=screen
         self.reset_stats()
     def reset_stats(self):
-        # self.ship_left=self.ai_settings.ship_limit
         self.game_start=0
         self.game_over=0
         self.enemy=[]
@@ -28,9 +27,10 @@ class Gamestatus():
         self.easy=1
         self.page=0
         self.score=0
+        self.time=0
         # self.reward=0
-    def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0)):
-        return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color)
+    def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0),img=None):
+        return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color,img)
     def new_button(self,msg,centerx,centery,width=150,height=50,color=(0,255,0),FILL=True):
         b=self.create_button(msg,width,height,48,True,color)
         b.rect.center=(centerx,centery)
@@ -49,24 +49,32 @@ class Gamestatus():
 
 
     def create_person(self,centerx,ID):
-        b=self.create_button("",150,400,0,True,(255,255,0))
+        b=self.create_button("",150,400,0,True,(255,255,0),chara[ID])
         b.rect.center=(centerx,300)
-        # b.draw_button()
+        b.draw_button()
         b_name=self.create_button(name[ID],150,50,48,True,(0,255,0))
         b_name.rect.center=(centerx,600)
         b_name.draw_button()
-        self.screen.blit(chara[ID], b.rect)
         return b
 
     def show_game_statement(self):
-        if self.game_start==0 or self.pause==1:return
+        if self.game_start==0 or self.pause:return
         for enemy in self.enemy:
             self.hp_button=self.new_button("",enemy.rect.centerx,enemy.rect.centery-100,enemy.hp*10,30,(255,0,0))
         if self.chara != None:
-           self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-100,self.chara.hp,30)
+            self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-100,self.chara.hp,30)
+            self.level_button=self.create_button("level:"+str(self.chara.level),200,50,48,0)
+            self.level_button.rect.center=(self.chara.rect.centerx,self.chara.rect.centery-130)
+            self.level_button.draw_button(False)
+
+
         score_button=self.create_button("score:"+str(self.score),200,50,48,0)
         score_button.rect.center=(self.ai_settings.screen_width-score_button.rect.width,float(score_button.rect.height)/2)
         score_button.draw_button(False)
+
+        time_button=self.create_button("time:"+str(self.time),200,50,48,0)
+        time_button.rect.center=(score_button.rect.width,float(time_button.rect.height)/2)
+        time_button.draw_button(False)
 
     def draw_page(self):
         if self.game_over==1:
@@ -78,7 +86,6 @@ class Gamestatus():
         if self.page==0:#初始
             # pass
             # life=Life(self.screen)
-            # life.draw_life(self.ship_left)
 
             # score_button=self.create_button("score:"+str(self.score),200,50,48,0)
             # score_button.rect.center=(self.ai_settings.screen_width-score_button.rect.width,float(score_button.rect.height)/2)
@@ -123,6 +130,8 @@ class Gamestatus():
             self.talent_button_1=self.new_button("talent1",383,444)
             self.talent_button_2=self.new_button("talent2",683,444)
             self.talent_button_3=self.new_button("talent3",1083,444)
+
+
     def colli(self,bt):
         return bt.rect.collidepoint(self.mouse_x,self.mouse_y)
     def turn_page(self,mouse_x,mouse_y):
@@ -134,15 +143,17 @@ class Gamestatus():
                 self.page=0
                 self.pause=0
             return
-        ##等级提升时，把pause设为 2 
+        
         if self.pause == 2:##升级界面
             if self.colli(self.talent_button_1):
                 ##把选项1传入到人物属性提升
-                self.page=111
+                self.pause = 0
             elif self.colli(self.talent_button_2):
-                self.page=111
+                self.pause = 0
             elif self.colli(self.talent_button_3):
-                self.page=111
+                self.pause = 0
+            return
+        
         if self.page==0:#初始界面
             if self.colli(self.start_button):
                 self.page=1
@@ -192,17 +203,6 @@ class Gamestatus():
                 self.page=111
                 self.game_start=1
             
-        # elif self.page==1:
-        #     if self.easy_rect.collidepoint(mouse_x,mouse_y):
-        #         self.easy=1
-        #         self.page+=1
-        #     elif self.hard_rect.collidepoint(mouse_x,mouse_y):
-        #         self.easy=0
-        #         self.page+=1
-        
-
-        # if self.page==2:
-        #     self.game_over=0
             
             
 

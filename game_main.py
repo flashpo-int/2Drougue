@@ -20,6 +20,7 @@ class Game():
     def reset(self):        
         self.status.reset_stats()
         self.gp = Game_play(self.screen,self.status)
+        self.left_time=self.ai_settings.max_time
     def check_event(self):
         for event in pygame.event.get():
             if self.status.game_start and not self.status.pause:
@@ -46,7 +47,7 @@ class Game():
             self.status.game_lose=0
             self.status.game_over=1
             return
-        if not self.gp.check_hp(self.gp.chara):
+        if not self.gp.check_hp(self.gp.chara) or self.left_time<=0:
             self.status.game_lose=1
             self.status.game_over=1
             return
@@ -56,8 +57,10 @@ class Game():
             self.check_event()
             if self.status.game_start==1 and self.status.pause==0:
                 self.qi_dong()
+                self.left_time-=1.0/self.ai_settings.game_fps
+                self.status.time=int(self.left_time)
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(self.ai_settings.game_fps)
 
 game=Game()
 if __name__=='__main__':

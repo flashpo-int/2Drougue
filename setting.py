@@ -44,6 +44,8 @@ class Settings():
         self.small_screen_height= self.screen_height // 1.2
         self.bg_color = (230, 230, 230)
         self.small_bg_color=(100,100,100)
+        self.game_fps=60.0
+        self.max_time=15*60
     def save(self,what):
         self.recod=what # 不知道写啥，快点告诉我保存什么
         #把你们要保存的写在这里

@@ -1,6 +1,6 @@
 import pygame.font
 class Button():
-    def __init__(self,ai_settings,screen,msg,width=200,height=50,size=48,FILLED=True,color = (0,255,0)) -> None:
+    def __init__(self,ai_settings,screen,msg,width=200,height=50,size=48,FILLED=True,color = (0,255,0),img=None) -> None:
         self.screen=screen
         self.screen_rect=screen.get_rect()
         self.ai_settings=ai_settings
@@ -8,7 +8,7 @@ class Button():
         self.button_color=color
         self.text_color=(255,255,255)
         self.font=pygame.font.SysFont(None,size)
-        
+        self.img=img
         self.rect=pygame.Rect(0,0,self.width,self.height)
         self.rect.center=self.screen_rect.center
         self.prep_msg(msg,FILLED)
@@ -22,5 +22,8 @@ class Button():
     def draw_button(self,FIllED=True):
         self.msg_image_rect.center=self.rect.center
         if FIllED:
-            self.screen.fill(self.button_color,self.rect)
+            if self.img != None :
+                self.screen.blit(self.img,self.rect)
+            else :
+                self.screen.fill(self.button_color,self.rect)
         self.screen.blit(self.msg_image,self.msg_image_rect)
