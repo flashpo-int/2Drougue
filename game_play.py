@@ -28,15 +28,16 @@ class Game_play():
         self.screen = screen
         # data_class
         # weapon
-        self.arrow = Weapon("arrow", 10, 1, 1.5, 5, arrow, self.screen)
-        self.knife = Weapon("knife", 5, 1, 1.01, 10, knife, self.screen)
+        self.arrow = Weapon("arrow", 10, 1, 0.6, 5, arrow, self.screen)
+        self.knife = Weapon("knife", 5, 1, 0.6, 10, knife, self.screen)
         # character
         self.chara_1 = Character(Settings, self.screen,self.status, chara1, self.knife)
+ ##       self.chara_2 = Character(Settings,self.screen,self.status,chara1,self.arrow)
         # enemy
         self.enemy_1 = Enemy(10, 10, 2.5, 1, enemy1, self.screen, None)
         # setting:
-        self.enemy_cd = 5
-        self.enemy_lst = -5
+        self.enemy_cd = 2
+        self.enemy_lst = -2
 
         # score:
         self.score = 0

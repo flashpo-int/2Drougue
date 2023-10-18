@@ -3,7 +3,7 @@ from item_system import Weapon
 from item_system import Bullet
 
 exp = lambda x: x**2 + 6 * x + 9 # 每级所需经验
-gain = lambda x, tag: 0.05 * x ** 2 + 0.30 * x + 0.45 if not tag else 0 # 击杀每只小/大怪可获得经验
+gain = lambda x, tag: 0.05 * x ** 2 + 0.30 * x + 9 if not tag else 0 # 击杀每只小/大怪可获得经验 ## + 0.45
 
 class Character():
     def __init__(self, setting, screen, status, img, weapon) -> None:
@@ -23,7 +23,7 @@ class Character():
         self.hp_bonus = 0 # 生命加成
         self.shield = 50
         self.shield_max = 50 # 最大护甲值
-        self.shield_bonus = 0 # 护甲加成
+        self.shield_bonus = 0 # 护甲加成 ##可能除0直接炸了##后面加了if
         self.shield_cd = 3 # 护甲回复cd
         self.shield_lst = -3 # 记录上一次回复
         self.speed = 10 # tbd
@@ -98,13 +98,21 @@ class Character():
             self.exp_need -= extra
 
     def hp_up(self, delta):
-        self.hp *= (self.hp_bonus + delta) / self.hp_bonus
-        self.hp_max *= (self.hp_bonus + delta) / self.hp_bonus
+        if self.hp_bonus:
+            self.hp *= (self.hp_bonus + delta) / self.hp_bonus
+            self.hp_max *= (self.hp_bonus + delta) / self.hp_bonus
+        else:
+            self.hp *= delta
+            self.hp_max *= delta
         self.hp_bonus += delta
 
     def shield_up(self, delta):
-        self.shield *= (self.shield_bonus + delta) / self.shield_bonus
-        self.shield_max *= (self.shield_bonus + delta) / self.shield_bonus
+        if self.shield_bonus:
+            self.shield *= (self.shield_bonus + delta) / self.shield_bonus
+            self.shield_max *= (self.shield_bonus + delta) / self.shield_bonus
+        else:
+            self.shield *=delta
+            self.shield_max *= delta
         self.shield_bonus += delta
 
     def get_buff(self, type, level): # 获得buff， type表示类别，level稀有度
