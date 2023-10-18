@@ -14,7 +14,7 @@ class Game():
         pygame.init()
         self.clock=pygame.time.Clock()
         self.ai_settings=Settings()
-        self.screen=pygame.display.set_mode((self.ai_settings.screen_width,self.ai_settings.screen_height))
+        self.screen=pygame.display.set_mode((self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type]))
         self.status=Gamestatus(self.screen,self.ai_settings)
         self.reset()
     def reset(self):        

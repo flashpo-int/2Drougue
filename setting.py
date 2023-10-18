@@ -31,17 +31,23 @@ shield = pygame.image.load('weapon/shield.png')
 sword = pygame.image.load('weapon/sword.png')
 
 # score
-max_score = 100
+max_score = 1000
 
 class Settings():
     def __init__(self):
         self.screen_info = pygame.display.Info()
-        #self.screen_width = self.screen_info.current_w
-        #self.screen_height = self.screen_info.current_h
-        self.screen_width = 1500
-        self.screen_height = 800
-        self.small_screen_width= self.screen_width // 1.2
-        self.small_screen_height= self.screen_height // 1.2
+        self.screen_width=[]
+        self.screen_height=[]
+        self.small_screen_width=[0,0]
+        self.small_screen_height=[0,0]
+        self.screen_width.append(self.screen_info.current_w)
+        self.screen_height.append(self.screen_info.current_h)
+        self.screen_width.append(1500)
+        self.screen_height.append(800)
+        self.screen_type=1
+        for i in range(0,2):
+            self.small_screen_width[i]= self.screen_width[i] // 1.2
+            self.small_screen_height[i]= self.screen_height[i] // 1.2
         self.bg_color = (230, 230, 230)
         self.small_bg_color=(100,100,100)
         self.game_fps=60.0

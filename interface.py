@@ -4,6 +4,23 @@ import pygame
 from random import randint
 import sys
 
+import numpy as np
+from ctypes import cast,POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities,IAudioEndpointVolume
+
+devices=AudioUtilities.GetSpeakers()
+interface=devices.Activate(
+    IAudioEndpointVolume._iid_,CLSCTX_ALL,None)
+volume=cast(interface,POINTER(IAudioEndpointVolume))
+volRange=volume.GetVolumeRange()
+volBar=400
+volPer=0
+print(volRange)
+volume.SetMasterVolumeLevel(0,None)
+minVol=volRange[0]
+maxVol=volRange[1]
+
 chara=[]
 name=["lwt","lwt","lwt"]
 
@@ -19,6 +36,8 @@ class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
         self.ai_settings=ai_settings
         self.screen=screen
+        self.vol=0
+        volume.SetMasterVolumeLevel(self.vol,None)
         self.reset_stats()
     def reset_stats(self):
         self.game_start=0
@@ -34,6 +53,8 @@ class Gamestatus():
         self.score=0
         self.time=0
         self.chara_pre_level=0
+        self.volume_left=550
+        self.volume_right=1050
         # self.reward=0
     def create_button(self,msg,width=150,height=50,size=48,FILLED=True,color=(0,255,0),img=None):
         return Button(self.ai_settings,self.screen,msg,width,height,size,FILLED,color,img)
@@ -85,7 +106,7 @@ class Gamestatus():
 
 
         score_button=self.create_button("score:"+str(self.score),200,50,48,0)
-        score_button.rect.center=(self.ai_settings.screen_width-score_button.rect.width,float(score_button.rect.height)/2)
+        score_button.rect.center=(self.ai_settings.screen_width[self.ai_settings.screen_type]-score_button.rect.width,float(score_button.rect.height)/2)
         score_button.draw_button(False)
 
         time_button=self.create_button("time:"+str(self.time),200,50,48,0)
@@ -126,6 +147,12 @@ class Gamestatus():
 
         elif self.page==3:#设定
             self.back_button=self.new_button("Back",100,50)
+            volume=self.create_button("volume",200,50,48,0)
+            volume.rect.center=(300,500)
+            volume.draw_button(False)
+            self.volume_button=self.new_button("",(self.volume_left+self.volume_right)/2,500,self.volume_right-self.volume_left,30,(191,98,10))
+            self.volume_pos=np.interp(self.vol,[minVol,maxVol],[self.volume_left,self.volume_right])
+            self.new_button("",self.volume_pos,500,40,70,(114,51,4))
 
         elif self.page==4:#存档
             self.back_button=self.new_button("Back",100,50)
@@ -138,10 +165,18 @@ class Gamestatus():
             
     def show_other(self):
         if self.pause==1:#暂停选择返回主界面
-            self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
-            self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
+            self.small_screen=self.create_button("",self.ai_settings.small_screen_width[self.ai_settings.screen_type],self.ai_settings.small_screen_height[self.ai_settings.screen_type],0,True,color=(255,255,255))
+            self.small_screen.rect.center=(self.ai_settings.screen_width[self.ai_settings.screen_type]/2,self.ai_settings.screen_height[self.ai_settings.screen_type]/2)
             self.small_screen.draw_button()
-            self.menu_button=self.new_button("Menu",600,600)
+            self.menu_button=self.new_button("Menu",900,600)
+            self.full_button=self.new_button("full",600,600)
+            self.back2_button=self.new_button("back",300,600)
+            volume=self.create_button("volume",200,50,48,0)
+            volume.rect.center=(300,500)
+            volume.draw_button(False)
+            self.volume_button=self.new_button("",(self.volume_left+self.volume_right)/2,500,self.volume_right-self.volume_left,30,(191,98,10))
+            self.volume_pos=np.interp(self.vol,[minVol,maxVol],[self.volume_left,self.volume_right])
+            self.new_button("",self.volume_pos,500,40,70,(114,51,4))
         elif self.pause==2:##进入单局游戏内三选一提升
             # self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
             # self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
@@ -162,6 +197,14 @@ class Gamestatus():
             if self.colli(self.menu_button):
                 self.game_start=0
                 self.page=0
+                self.pause=0
+            elif self.colli(self.full_button):
+                self.ai_settings.screen_type^=1
+                self.screen=pygame.display.set_mode((self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type]))
+            elif self.colli(self.volume_button):
+                self.vol=np.interp(self.mouse_x,[self.volume_left,self.volume_right],[minVol,maxVol])
+                volume.SetMasterVolumeLevel(self.vol,None)
+            elif self.colli(self.back2_button):
                 self.pause=0
             return
         
@@ -212,6 +255,9 @@ class Gamestatus():
         elif self.page==3:#设定
             if self.colli(self.back_button):
                 self.page=0
+            elif self.colli(self.volume_button):
+                self.vol=np.interp(self.mouse_x,[self.volume_left,self.volume_right],[minVol,maxVol])
+                volume.SetMasterVolumeLevel(self.vol,None)
 
         elif self.page==4:#存档
             if self.colli(self.back_button):
