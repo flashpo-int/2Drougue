@@ -1,6 +1,7 @@
 from button import Button
 from setting import Settings
 import pygame
+from random import randint
 import sys
 
 chara=[]
@@ -9,6 +10,10 @@ name=["lwt","lwt","lwt"]
 chara.append (pygame.image.load('character\character1\char.bmp'))
 chara.append (pygame.image.load('character\character1\char2.png'))
 chara.append (pygame.image.load('character\character1\char1.png'))
+
+talent=["hp_up","shield_up","dmg_bonus","crit_rate","crit_dmg","miss"]
+buff=[0,0,0]
+level=[0,0,0]
 
 class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
@@ -58,15 +63,25 @@ class Gamestatus():
         b_name.draw_button()
         return b
 
+    def reget_buff(self):
+        level[0]=randint(1,3)
+        level[1]=randint(1,3)
+        level[2]=randint(1,3)
+        buff[0]=randint(0,5)
+        while buff[1]==buff[0]:buff[1]=randint(0,5)
+        while buff[1]==buff[2] or buff[0]==buff[2]:buff[2]=randint(0,5)
+
     def show_game_statement(self):
         if self.game_start==0 or self.pause:return
         for enemy in self.enemy:
-            self.hp_button=self.new_button("",enemy.rect.centerx,enemy.rect.centery-100,enemy.hp*10,30,(255,0,0))
+            self.hp_button=self.new_button("",enemy.rect.centerx,enemy.rect.centery-100,enemy.hp*10,10,(255,0,0))
         if self.chara != None:
-            self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-100,self.chara.hp,30)
+            self.hp_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-90,self.chara.hp,15)
+            self.shield_button=self.new_button("",self.chara.rect.centerx,self.chara.rect.centery-80,2.0*self.chara.shield,5,(0,0,255))
             self.level_button=self.create_button("level:"+str(self.chara.level),200,50,48,0)
             self.level_button.rect.center=(self.chara.rect.centerx,self.chara.rect.centery-130)
             self.level_button.draw_button(False)
+            
 
 
         score_button=self.create_button("score:"+str(self.score),200,50,48,0)
@@ -76,6 +91,9 @@ class Gamestatus():
         time_button=self.create_button("time:"+str(self.time),200,50,48,0)
         time_button.rect.center=(score_button.rect.width,float(time_button.rect.height)/2)
         time_button.draw_button(False)
+        if self.chara_pre_level!=self.chara.level:
+                self.pause=2
+                self.chara_pre_level=self.chara.level
 
     def draw_page(self):
         if self.game_over==1:
@@ -125,12 +143,14 @@ class Gamestatus():
             self.small_screen.draw_button()
             self.menu_button=self.new_button("Menu",600,600)
         elif self.pause==2:##进入单局游戏内三选一提升
-            self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
-            self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
-            self.small_screen.draw_button()
-            self.talent_button_1=self.new_button("talent1",383,444)
-            self.talent_button_2=self.new_button("talent2",683,444)
-            self.talent_button_3=self.new_button("talent3",1083,444)
+            # self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
+            # self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
+            # self.small_screen.draw_button()
+            if buff[0]==buff[1]:
+                self.reget_buff()
+            self.talent_button_1=self.new_button(talent[buff[0]],383,444)
+            self.talent_button_2=self.new_button(talent[buff[1]],683,444)
+            self.talent_button_3=self.new_button(talent[buff[2]],1083,444)
 
 
     def colli(self,bt):
@@ -147,11 +167,16 @@ class Gamestatus():
         
         if self.pause == 2:##升级界面
             if self.colli(self.talent_button_1):
-                ##把选项1传入到人物属性提升
+                self.chara.get_buff(buff[0],level[0])
+                buff[0]=buff[1]=0
                 self.pause = 0
             elif self.colli(self.talent_button_2):
+                self.chara.get_buff(buff[1],level[1])
+                buff[0]=buff[1]=0
                 self.pause = 0
             elif self.colli(self.talent_button_3):
+                self.chara.get_buff(buff[2],level[2])
+                buff[0]=buff[1]=0
                 self.pause = 0
             return
         
@@ -204,10 +229,6 @@ class Gamestatus():
                 self.page=111
                 self.game_start=1
 
-        elif self.page==111:
-            if self.chara_pre_level!=self.chara.level:
-                self.pause=2
-                self.chara_pre_level=self.chara.level
             
             
 
