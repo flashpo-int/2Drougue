@@ -36,7 +36,7 @@ class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
         self.ai_settings=ai_settings
         self.screen=screen
-        self.vol=0
+        self.vol=(minVol+maxVol)/2
         volume.SetMasterVolumeLevel(self.vol,None)
         self.reset_stats()
     def reset_stats(self):
