@@ -114,6 +114,7 @@ class Gamestatus():
         time_button.draw_button(False)
         if self.chara_pre_level!=self.chara.level:
                 self.pause=2
+                self.bao=1
                 self.chara_pre_level=self.chara.level
 
     def draw_page(self):
