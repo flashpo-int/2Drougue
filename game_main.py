@@ -35,33 +35,30 @@ class Game():
         self.status.draw_page()
         self.status.show_other()
         self.status.show_game_statement()
-        flag=0
-        if self.status.game_over==1:flag=1
         if self.status.game_start and not self.status.pause:
             self.gp.draw()
         pygame.display.flip()    
-        if flag:
-            sleep(1)
-            self.reset()
     def qi_dong(self):
         self.gp.play()
         if self.gp.check_score(): # 分数达标
             self.status.game_lose=0
-            self.status.game_over=1
+            self.status.pause=3
             return
         if not self.gp.check_hp(self.gp.chara) or self.left_time<=0:
             self.status.game_lose=1
-            self.status.game_over=1
+            self.status.pause=3
             return
         pass
     def run_game(self):
         while True:
+            if self.status.restart:
+                self.reset()
+            self.draw()
             self.check_event()
             if self.status.game_start==1 and self.status.pause==0:
                 self.qi_dong()
                 self.left_time-=1.0/self.ai_settings.game_fps
                 self.status.time=int(self.left_time)
-            self.draw()
             self.clock.tick(self.ai_settings.game_fps)
 
 game=Game()

@@ -17,7 +17,6 @@ volRange=volume.GetVolumeRange()
 volBar=400
 volPer=0
 print(volRange)
-volume.SetMasterVolumeLevel(0,None)
 minVol=volRange[0]
 maxVol=volRange[1]
 
@@ -36,12 +35,13 @@ class Gamestatus():
     def __init__(self,screen,ai_settings) -> None:
         self.ai_settings=ai_settings
         self.screen=screen
-        self.vol=(minVol+maxVol)/2
-        volume.SetMasterVolumeLevel(self.vol,None)
+        self.vol = volume.GetMasterVolumeLevelScalar()
+        self.vol=np.interp(self.vol,[0.0,1.0],[minVol,maxVol])
+        self.volPer=np.interp(self.vol,[minVol,maxVol],[0,100])
         self.reset_stats()
     def reset_stats(self):
         self.game_start=0
-        self.game_over=0
+        self.restart=0
         self.enemy=[]
         self.chara=None
         self.person_id=0
@@ -113,17 +113,11 @@ class Gamestatus():
         time_button.rect.center=(score_button.rect.width,float(time_button.rect.height)/2)
         time_button.draw_button(False)
         if self.chara_pre_level!=self.chara.level:
-                self.pause=2
-                self.bao=1
-                self.chara_pre_level=self.chara.level
+            self.pause=2
+            self.bao=1
+            self.chara_pre_level=self.chara.level
 
     def draw_page(self):
-        if self.game_over==1:
-            if self.game_lose:
-                self.new_button("You lose",750,400)
-            else :
-                self.new_button("You win",750,400)
-
         if self.page==0:#初始
             # pass
             # life=Life(self.screen)
@@ -154,6 +148,9 @@ class Gamestatus():
             self.volume_button=self.new_button("",(self.volume_left+self.volume_right)/2,500,self.volume_right-self.volume_left,30,(191,98,10))
             self.volume_pos=np.interp(self.vol,[minVol,maxVol],[self.volume_left,self.volume_right])
             self.new_button("",self.volume_pos,500,40,70,(114,51,4))
+            Per=self.create_button(str(int(self.volPer))+"%",200,50,48,0)
+            Per.rect.center=(self.volume_right+50,500)
+            Per.draw_button(False)
 
         elif self.page==4:#存档
             self.back_button=self.new_button("Back",100,50)
@@ -178,17 +175,29 @@ class Gamestatus():
             self.volume_button=self.new_button("",(self.volume_left+self.volume_right)/2,500,self.volume_right-self.volume_left,30,(191,98,10))
             self.volume_pos=np.interp(self.vol,[minVol,maxVol],[self.volume_left,self.volume_right])
             self.new_button("",self.volume_pos,500,40,70,(114,51,4))
+            Per=self.create_button(str(int(self.volPer))+"%",200,50,48,0)
+            Per.rect.center=(self.volume_right+50,500)
+            Per.draw_button(False)
         elif self.pause==2:##进入单局游戏内三选一提升
-            # self.small_screen=self.create_button("",self.ai_settings.small_screen_width,self.ai_settings.small_screen_height,0,True,color=(255,255,255))
-            # self.small_screen.rect.center=(self.ai_settings.screen_width/2,self.ai_settings.screen_height/2)
-            # self.small_screen.draw_button()
             if buff[0]==buff[1]:
                 self.reget_buff()
             self.talent_button_1=self.new_button(talent[buff[0]],383,444)
             self.talent_button_2=self.new_button(talent[buff[1]],683,444)
             self.talent_button_3=self.new_button(talent[buff[2]],1083,444)
+        elif self.pause==3:
+            self.small_screen=self.create_button("",self.ai_settings.small_screen_width[self.ai_settings.screen_type],self.ai_settings.small_screen_height[self.ai_settings.screen_type],0,True,color=(255,255,255))
+            self.small_screen.rect.center=(self.ai_settings.screen_width[self.ai_settings.screen_type]/2,self.ai_settings.screen_height[self.ai_settings.screen_type]/2)
+            self.small_screen.draw_button()
+            self.restart_button=self.new_button("restart",600,600)
+            score_button=self.create_button("score:"+str(self.score),200,50,48,0)
+            score_button.rect.center=(300,450)
+            score_button.draw_button(False)
 
-
+            if self.game_lose==1:
+                self.new_button("you lose",600,300)
+            else:
+                self.new_button("you win",600,300)
+            
     def colli(self,bt):
         return bt.rect.collidepoint(self.mouse_x,self.mouse_y)
     def turn_page(self,mouse_x,mouse_y):
@@ -204,6 +213,7 @@ class Gamestatus():
                 self.screen=pygame.display.set_mode((self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type]))
             elif self.colli(self.volume_button):
                 self.vol=np.interp(self.mouse_x,[self.volume_left,self.volume_right],[minVol,maxVol])
+                self.volPer=np.interp(self.vol,[minVol,maxVol],[0,100])
                 volume.SetMasterVolumeLevel(self.vol,None)
             elif self.colli(self.back2_button):
                 self.pause=0
@@ -223,7 +233,10 @@ class Gamestatus():
                 buff[0]=buff[1]=0
                 self.pause = 0
             return
-        
+        elif self.pause==3:
+            if self.colli(self.restart_button):
+                self.restart=1
+            return
         if self.page==0:#初始界面
             if self.colli(self.start_button):
                 self.page=1
@@ -258,6 +271,7 @@ class Gamestatus():
                 self.page=0
             elif self.colli(self.volume_button):
                 self.vol=np.interp(self.mouse_x,[self.volume_left,self.volume_right],[minVol,maxVol])
+                self.volPer=np.interp(self.vol,[minVol,maxVol],[0,100])
                 volume.SetMasterVolumeLevel(self.vol,None)
 
         elif self.page==4:#存档

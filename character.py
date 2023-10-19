@@ -43,6 +43,9 @@ class Character():
         pass
     
     def move(self):
+        if self.status.bao==1:
+            self.status.bao=0
+            self.left=self.right=self.up=self.down=0
         #print(self.left, self.right, self.up, self.down)
         if self.left: self.rect.centerx = max(self.width / 2, self.rect.centerx - self.speed)
         if self.right: self.rect.centerx = min(self.screen_rect.width - self.width / 2, self.rect.centerx + self.speed)
@@ -57,9 +60,7 @@ class Character():
         if key == pygame.K_w or key==pygame.K_UP: self.up = tag
         if key == pygame.K_s or key==pygame.K_DOWN: self.down = tag
 
-        if self.status.bao==1:
-            self.status.bao=0
-            self.left=self.right=self.up=self.down=0
+
             
     def attack(self, mouse_x, mouse_y):
         now = time.time()
@@ -140,7 +141,7 @@ class Character():
             if level == 1: self.miss += 0.03
             elif level == 2: self.miss += 0.05
             elif level == 3: self.miss += 0.08
-    
+        self.hp=self.hp_max
     def judge_crit(self):
         flag = random.random()
         return True if flag <= self.crit_rate else False
