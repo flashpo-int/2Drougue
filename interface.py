@@ -23,9 +23,9 @@ maxVol=volRange[1]
 chara=[]
 name=["lwt","lwt","lwt"]
 
-chara.append (pygame.image.load('character\character1\char.bmp'))
-chara.append (pygame.image.load('character\character1\char2.png'))
-chara.append (pygame.image.load('character\character1\char1.png'))
+chara.append (pygame.image.load('character\character1\charrest.png'))
+chara.append (pygame.image.load('character\character1\charrest.png'))
+chara.append (pygame.image.load('character\character1\charrest.png'))
 
 talent=["hp_up","shield_up","dmg_bonus","crit_rate","crit_dmg","miss"]
 buff=[0,0,0]

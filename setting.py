@@ -20,7 +20,7 @@ enemy2 = pygame.image.load('character\enemy2\sprite1.png')
 enemy2 = pygame.transform.smoothscale(enemy2, (enemy_width, enemy_height))
 enemy3 = pygame.image.load('character\enemy3\sprite1.png')
 enemy3 = pygame.transform.smoothscale(enemy3, (enemy_width, enemy_height))
-chara1 = pygame.image.load('character\character1\char.bmp')
+chara1 = pygame.image.load('character\character1\charrest.png')
 chara1 = pygame.transform.smoothscale(chara1, (chara_width, chara_height))
 
 # weapon image
