@@ -9,12 +9,15 @@ from character import Character
 from enemy import Enemy
 from game_play import Game_play
 from time import sleep
+
 class Game():
     def __init__(self) -> None:
         pygame.init()
         self.clock=pygame.time.Clock()
         self.ai_settings=Settings()
         self.screen=pygame.display.set_mode((self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type]))
+        self.ingame=pygame.image.load('background\ingame.jpg')
+        self.ingame=pygame.transform.smoothscale(self.ingame,(self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type]))
         self.status=Gamestatus(self.screen,self.ai_settings)
         self.reset()
     def reset(self):        
@@ -31,7 +34,7 @@ class Game():
             else: self.status.check_event(event)
 
     def draw(self):
-        self.screen.fill(self.ai_settings.bg_color)
+        if self.status.game_start==0:self.screen.fill(self.ai_settings.bg_color)
         self.status.draw_page()
         self.status.show_other()
         self.status.show_game_statement()
@@ -39,6 +42,8 @@ class Game():
             self.gp.draw()
         pygame.display.flip()    
     def qi_dong(self):
+
+        Gamestatus.new_button(self.status,"",self.ai_settings.screen_width[self.ai_settings.screen_type]/2,self.ai_settings.screen_height[self.ai_settings.screen_type]/2,self.ai_settings.screen_width[self.ai_settings.screen_type],self.ai_settings.screen_height[self.ai_settings.screen_type],(0,0,0),self.ingame)
         self.gp.play()
         if self.gp.check_score(): # 分数达标
             self.status.game_lose=0
