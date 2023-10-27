@@ -99,6 +99,7 @@ class Game_play():
     def check_event(self, event):
         if event.type == pygame.KEYDOWN:
             self.direction_chara(event.key, 1)
+            self.chara.get_skill(event.key)
         elif event.type == pygame.KEYUP:
             self.direction_chara(event.key, 0)
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -115,6 +116,7 @@ class Game_play():
         self.chara_attack()
         self.enemy_attack()
         self.chara.get_shield()
+        self.chara.check_skill()
         self.status.chara=self.chara
         self.status.enemy=self.enemy
         self.status.score=self.score

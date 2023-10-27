@@ -20,15 +20,15 @@ class Character():
         # chara data
         self.hp = 100
         self.hp_max = 100 # 最大生命
-        self.hp_bonus = 0 # 生命加成
+        self.hp_bonus = 1 # 生命加成
         self.shield = 50
         self.shield_max = 50 # 最大护甲值
-        self.shield_bonus = 0 # 护甲加成 ##可能除0直接炸了##后面加了if
+        self.shield_bonus = 1 # 护甲加成 (##可能除0直接炸了##后面加了if)
         self.shield_cd = 3 # 护甲回复cd
         self.shield_lst = -3 # 记录上一次回复
         self.speed = 10 # tbd
         self.atk_speed = 50 # tbd
-        self.dmg_bonus = 0 # 伤害加成
+        self.dmg_bonus = 1 # 伤害加成
         self.miss = 0 # 闪避率
         self.crit_rate = 0.05 # 暴击
         self.crit_dmg = 0.5 #暴伤
@@ -40,6 +40,21 @@ class Character():
         self.exp_bonus = 0
         self.level = 0 # 最高16级
         self.exp_need = exp(0)
+        # skill1 --  潜能爆发
+        self.buff1 = False
+        self.cd1 = 10
+        self.lst1 = -self.cd1
+        self.time1 = 10
+        # skill2 -- 铁甲护佑
+        self.buff2 = False
+        self.cd2 = 10
+        self.lst2 = -self.cd2
+        self.time2 = 3
+        # skill3 -- 幻影突袭
+        self.buff3 = False
+        self.cd3 = 10
+        self.lst3 = -self.cd3
+        self.time3 = 3
         pass
     
     def move(self):
@@ -87,6 +102,8 @@ class Character():
     def draw(self):
         self.screen.blit(self.img, self.rect)
         self.weapon.draw()
+        if self.buff2: # 贴盾的图
+            pass
 
     def get_exp(self, tag):
         if self.level == 16: return
@@ -99,21 +116,13 @@ class Character():
             self.exp_need -= extra
 
     def hp_up(self, delta):
-        if self.hp_bonus:
-            self.hp *= (self.hp_bonus + delta) / self.hp_bonus
-            self.hp_max *= (self.hp_bonus + delta) / self.hp_bonus
-        else:
-            self.hp *= delta
-            self.hp_max *= delta
+        self.hp *= (self.hp_bonus + delta) / self.hp_bonus
+        self.hp_max *= (self.hp_bonus + delta) / self.hp_bonus
         self.hp_bonus += delta
 
     def shield_up(self, delta):
-        if self.shield_bonus:
-            self.shield *= (self.shield_bonus + delta) / self.shield_bonus
-            self.shield_max *= (self.shield_bonus + delta) / self.shield_bonus
-        else:
-            self.shield *=delta
-            self.shield_max *= delta
+        self.shield *= (self.shield_bonus + delta) / self.shield_bonus
+        self.shield_max *= (self.shield_bonus + delta) / self.shield_bonus
         self.shield_bonus += delta
 
     def get_buff(self, type, level): # 获得buff， type表示类别，level稀有度
@@ -148,13 +157,14 @@ class Character():
 
     def get_damage(self):
         if self.weapon.type: # 武器是远程
-            basis = (self.weapon.dmg + self.distant_dmg) * (1 + self.dmg_bonus)
+            basis = (self.weapon.dmg + self.distant_dmg) * self.dmg_bonus
             return basis * (1 + self.crit_dmg) if self.judge_crit() else basis # 暴击与否
         else:
-            basis = (self.weapon.dmg + self.near_dmg) * (1 + self.dmg_bonus)
+            basis = (self.weapon.dmg + self.near_dmg) * self.dmg_bonus
             return basis * (1 + self.crit_dmg) if self.judge_crit() else basis # 暴击与否
         
     def get_hurt(self, dmg):
+        if self.buff2: return # buff2 is on, won't get hurt
         extra = dmg - self.shield
         self.shield = max(0, self.shield - dmg)
         if extra <= 0: return
@@ -166,3 +176,43 @@ class Character():
         #print(self.shield_lst, cur, self.shield)
         self.shield_lst = cur
         self.shield = min(self.shield_max, self.shield + 1)
+        
+    def get_skill(self, key):
+        if key == pygame.K_q: # q skill
+            cur = time.time()
+            if cur - self.lst1 < self.cd1 or self.buff1: return
+            self.lst1 = cur
+            self.buff1 = True
+            self.weapon.cd /= 2
+            self.rect.width *= 1.25
+            self.rect.height *= 1.25
+            self.img = pygame.transform.smoothscale(self.img, (self.rect.width, self.rect.height))
+        elif key == pygame.K_f: # f skill
+            cur = time.time()
+            if cur - self.lst2 < self.cd2 or self.buff2: return
+            self.lst2 = cur
+            self.buff2 = True
+        elif key == pygame.K_e: # e skill
+            cur = time.time()
+            if cur - self.lst3 < self.cd3 or self.buff3: return
+            self.lst3 = cur
+            self.buff3 = True
+            self.speed *= 2
+    
+    def check_skill(self):
+        cur = time.time()
+        if self.buff1 and cur - self.lst1 >= self.time1:
+            self.buff1 = False
+            self.lst1 = cur
+            self.weapon.cd *= 2
+            self.rect.width /= 1.25
+            self.rect.height /= 1.25
+            self.img = pygame.transform.smoothscale(self.img, (self.rect.width, self.rect.height))
+
+        if self.buff2 and cur - self.lst2 >= self.time2:
+            self.buff2 = False
+            self.lst2 = cur
+        if self.buff3 and cur - self.lst3 >= self.time3:
+            self.buff3 = False
+            self.lst3 = cur
+            self.speed /= 2
